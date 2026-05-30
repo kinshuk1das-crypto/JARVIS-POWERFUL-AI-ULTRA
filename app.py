@@ -3,777 +3,860 @@ from flask import Flask, render_template_string
 app = Flask(__name__)
 
 HTML = """
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>JARVIS AI</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-
-<style>
-
-:root{
-    --bg:#020617;
-    --card:rgba(255,255,255,0.05);
-    --text:#ffffff;
-    --sub:#94a3b8;
-    --blue:#00bfff;
-    --green:#00ff88;
-    --purple:#9333ea;
-    --pink:#ff2ea6;
-    --border:rgba(255,255,255,0.08);
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:"Poppins",sans-serif;
-    overflow:hidden;
-}
-
-.bg{
-    position:fixed;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    z-index:-1;
-}
-
-.circle{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(120px);
-    opacity:0.4;
-    animation:float 10s infinite ease-in-out;
-}
-
-.c1{
-    width:500px;
-    height:500px;
-    background:var(--blue);
-    top:-120px;
-    left:-120px;
-}
-
-.c2{
-    width:450px;
-    height:450px;
-    background:var(--green);
-    bottom:-120px;
-    right:-120px;
-}
-
-.c3{
-    width:350px;
-    height:350px;
-    background:var(--purple);
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(40px);
-    }
-}
-
-.app{
-    display:flex;
-    width:100%;
-    height:100vh;
-}
-
-.sidebar{
-    width:320px;
-    background:rgba(255,255,255,0.04);
-    backdrop-filter:blur(15px);
-    border-right:1px solid var(--border);
-    padding:20px;
-    overflow-y:auto;
-}
-
-.logo{
-    text-align:center;
-    font-size:36px;
-    font-family:"Orbitron",sans-serif;
-    font-weight:900;
-    margin-bottom:30px;
-
-    background:linear-gradient(90deg,var(--blue),var(--green));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.section{
-    color:var(--blue);
-    margin:20px 0 10px;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:2px;
-}
-
-.sidebar button{
-    width:100%;
-    padding:15px;
-    margin-bottom:12px;
-    border:none;
-    border-radius:15px;
-    background:var(--card);
-    color:var(--text);
-    cursor:pointer;
-    text-align:left;
-    transition:0.3s;
-    font-size:15px;
-}
-
-.sidebar button:hover{
-    transform:translateX(5px);
-    background:linear-gradient(90deg,var(--blue),var(--green));
-    color:black;
-}
-
-.sidebar i{
-    margin-right:10px;
-}
-
-.main{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-}
-
-.topbar{
-    height:75px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 30px;
-    background:rgba(255,255,255,0.04);
-    border-bottom:1px solid var(--border);
-}
-
-.title{
-    font-size:24px;
-    color:var(--blue);
-    font-family:"Orbitron",sans-serif;
-}
-
-.status{
-    color:var(--green);
-    font-size:14px;
-}
-
-.chat{
-    flex:1;
-    overflow-y:auto;
-    padding:30px;
-}
-
-.welcome{
-    text-align:center;
-    margin-bottom:30px;
-}
-
-.welcome h1{
-    font-size:75px;
-    font-family:"Orbitron",sans-serif;
-
-    background:linear-gradient(90deg,var(--blue),var(--green));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.welcome p{
-    color:var(--sub);
-}
-
-.core-box{
-    width:240px;
-    height:240px;
-    margin:20px auto;
-    position:relative;
-}
-
-.ring{
-    position:absolute;
-    border-radius:50%;
-    border:3px solid transparent;
-}
-
-.r1{
-    width:240px;
-    height:240px;
-    border-top:3px solid var(--blue);
-    border-bottom:3px solid var(--green);
-    animation:spin 6s linear infinite;
-}
-
-.r2{
-    width:190px;
-    height:190px;
-    top:25px;
-    left:25px;
-    border-left:3px solid var(--purple);
-    border-right:3px solid var(--pink);
-    animation:spinReverse 5s linear infinite;
-}
-
-.r3{
-    width:140px;
-    height:140px;
-    top:50px;
-    left:50px;
-    border:2px dashed rgba(255,255,255,0.4);
-    animation:spin 10s linear infinite;
-}
-
-.core{
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    position:absolute;
-    top:80px;
-    left:80px;
-
-    background:radial-gradient(circle,var(--blue),var(--green));
-
-    box-shadow:0 0 50px var(--blue);
-
-    animation:pulse 2s infinite;
-}
-
-@keyframes spin{
-    100%{
-        transform:rotate(360deg);
-    }
-}
-
-@keyframes spinReverse{
-    100%{
-        transform:rotate(-360deg);
-    }
-}
-
-@keyframes pulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.1);
-    }
-}
-
-.messages{
-    max-width:1000px;
-    margin:auto;
-}
-
-.message{
-    padding:16px;
-    border-radius:18px;
-    margin-bottom:15px;
-}
-
-.user{
-    background:rgba(0,191,255,0.15);
-    border-left:4px solid var(--blue);
-    margin-left:20%;
-}
-
-.ai{
-    background:rgba(0,255,136,0.10);
-    border-left:4px solid var(--green);
-    margin-right:20%;
-}
-
-.input-area{
-    padding:20px;
-    background:rgba(255,255,255,0.04);
-    border-top:1px solid var(--border);
-}
-
-.input-box{
-    display:flex;
-    gap:12px;
-}
-
-.input-box input{
-    flex:1;
-    padding:16px;
-    border:none;
-    border-radius:16px;
-    background:rgba(255,255,255,0.08);
-    color:white;
-    outline:none;
-}
-
-.input-box button{
-    padding:16px 24px;
-    border:none;
-    border-radius:16px;
-    cursor:pointer;
-    font-weight:700;
-    background:linear-gradient(90deg,var(--blue),var(--green));
-}
-
-.image-box{
-    text-align:center;
-    margin-top:20px;
-}
-
-.image-box img{
-    width:100%;
-    max-width:750px;
-    border-radius:22px;
-    border:2px solid var(--blue);
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS AI</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/8649/8649595.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        :root {
+            --bg: #0a0e27;
+            --blue: #00d4ff;
+            --green: #00ff88;
+            --purple: #a855f7;
+            --text: #f0f0f0;
+            --sub: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            font-family: "Poppins", sans-serif;
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+        }
+        .bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            background: radial-gradient(ellipse at 20% 50%, rgba(0,212,255,0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0,255,136,0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(168,85,247,0.1) 0%, transparent 50%);
+        }
+        .login-screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10,14,39,0.98);
+            z-index: 9999;
+        }
+        .login-box {
+            padding: 50px 40px;
+            border-radius: 30px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            text-align: center;
+            width: 400px;
+            animation: slideUp 0.6s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ai-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            padding: 15px;
+            border-radius: 50%;
+            background: rgba(7,20,38,0.9);
+            box-shadow: 0 0 30px var(--blue), 0 0 60px rgba(0,212,255,0.5);
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0%,100% { box-shadow: 0 0 30px var(--blue), 0 0 60px rgba(0,212,255,0.5); }
+            50% { box-shadow: 0 0 50px var(--green), 0 0 100px rgba(0,255,136,0.5); }
+        }
+        .login-title {
+            font-size: 48px;
+            margin: 20px 0;
+            font-family: "Orbitron", sans-serif;
+            background: linear-gradient(135deg, var(--blue), var(--green), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sub);
+        }
+        .login-box input {
+            width: 100%;
+            padding: 16px 16px 16px 45px;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            outline: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .login-box input:focus {
+            border-color: var(--blue);
+            background: rgba(255,255,255,0.12);
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            color: #000;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+        .app {
+            display: none;
+            width: 100%;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+        }
+        .sidebar {
+            width: 350px;
+            background: rgba(19,24,66,0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            padding: 10px;
+            border-radius: 50%;
+            background: rgba(7,20,38,0.9);
+            box-shadow: 0 0 25px rgba(0,212,255,0.4);
+            animation: pulseGlow 2s infinite;
+        }
+        .app-title {
+            font-family: "Orbitron", sans-serif;
+            font-size: 28px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+        }
+        .profile-card {
+            padding: 20px;
+            border-radius: 20px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--blue);
+            margin-bottom: 10px;
+        }
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+        }
+        .profile-role {
+            font-size: 12px;
+            color: var(--green);
+            text-transform: uppercase;
+        }
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--blue);
+            margin: 20px 0 15px;
+            font-weight: 600;
+        }
+        .nav-button {
+            width: 100%;
+            padding: 14px 20px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            border-radius: 15px;
+            background: var(--glass);
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-button:hover {
+            transform: translateX(8px);
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            color: #000;
+        }
+        .logout-btn {
+            margin-top: auto;
+            background: rgba(239,68,68,0.1);
+            border-color: rgba(239,68,68,0.3);
+        }
+        .logout-btn:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: statusPulse 2s infinite;
+        }
+        @keyframes statusPulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(0,255,136,0); }
+        }
+        .current-time {
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--sub);
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+        .welcome-screen {
+            text-align: center;
+            margin: auto;
+            padding: 50px 20px;
+        }
+        .welcome-screen h1 {
+            font-size: 72px;
+            font-family: "Orbitron", sans-serif;
+            background: linear-gradient(135deg, var(--blue), var(--green), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .command-suggestions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+        .suggestion-chip {
+            padding: 12px 20px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .suggestion-chip:hover {
+            background: var(--blue);
+            color: #000;
+            border-color: var(--blue);
+            transform: translateY(-3px);
+        }
+        .messages {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .message {
+            padding: 18px 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-message {
+            background: rgba(0,212,255,0.15);
+            border-left: 4px solid var(--blue);
+            margin-left: 20%;
+        }
+        .ai-message {
+            background: rgba(0,255,136,0.12);
+            border-left: 4px solid var(--green);
+            margin-right: 20%;
+        }
+        .message-header {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .input-area {
+            padding: 25px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+        }
+        .input-container {
+            display: flex;
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .input-container input {
+            flex: 1;
+            padding: 16px 25px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+        }
+        .input-container input:focus {
+            border-color: var(--blue);
+            background: rgba(255,255,255,0.12);
+        }
+        .send-button {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0,212,255,0.3);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 10px; }
+    </style>
 </head>
-
 <body>
-
-<div class="bg">
-
-<div class="circle c1"></div>
-<div class="circle c2"></div>
-<div class="circle c3"></div>
-
-</div>
-
-<div class="app">
-
-<div class="sidebar">
-
-<div class="logo">
-<i class="fas fa-robot"></i> JARVIS AI
-</div>
-
-<button onclick="newChat()">
-<i class="fas fa-plus"></i>
-New Chat
-</button>
-
-<button onclick="generateImage()">
-<i class="fas fa-image"></i>
-AI Image
-</button>
-
-<button onclick="startVoice()">
-<i class="fas fa-microphone"></i>
-Voice Assistant
-</button>
-
-<button onclick="clearChat()">
-<i class="fas fa-trash"></i>
-Clear Chat
-</button>
-
-<div class="section">Entertainment</div>
-
-<button onclick="openWebsite('https://youtube.com')">
-<i class="fab fa-youtube"></i>
-YouTube
-</button>
-
-<button onclick="openWebsite('https://netflix.com')">
-<i class="fas fa-film"></i>
-Netflix
-</button>
-
-<button onclick="openWebsite('https://spotify.com')">
-<i class="fab fa-spotify"></i>
-Spotify
-</button>
-
-<div class="section">Coding</div>
-
-<button onclick="openWebsite('https://github.com')">
-<i class="fab fa-github"></i>
-GitHub
-</button>
-
-<button onclick="openWebsite('https://replit.com')">
-<i class="fas fa-code"></i>
-Replit
-</button>
-
-</div>
-
-<div class="main">
-
-<div class="topbar">
-
-<div class="title">
-JARVIS AI
-</div>
-
-<div class="status" id="clock">
-ONLINE
-</div>
-
-</div>
-
-<div class="chat">
-
-<div class="welcome">
-
-<div class="core-box">
-
-<div class="ring r1"></div>
-<div class="ring r2"></div>
-<div class="ring r3"></div>
-<div class="core"></div>
-
-</div>
-
-<h1>JARVIS</h1>
-
-<p>
-Advanced Artificial Intelligence Assistant
-</p>
-
-</div>
-
-<div class="messages" id="messages"></div>
-
-<div class="image-box" id="imageBox"></div>
-
-</div>
-
-<div class="input-area">
-
-<div class="input-box">
-
-<input type="text" id="userInput" placeholder="Ask JARVIS anything...">
-
-<button onclick="sendMessage()">
-<i class="fas fa-paper-plane"></i>
-Send
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-const input = document.getElementById("userInput");
-const messages = document.getElementById("messages");
-const imageBox = document.getElementById("imageBox");
-
-/* CLOCK */
-
-function updateClock(){
-
-const now = new Date();
-
-document.getElementById("clock").innerHTML =
-"● " + now.toLocaleTimeString([],{
-hour:'2-digit',
-minute:'2-digit',
-hour12:true
-});
-
-}
-
-setInterval(updateClock,1000);
-
-/* ADD MESSAGE */
-
-function addMessage(type,text){
-
-const div = document.createElement("div");
-
-div.className = `message ${type}`;
-
-div.innerHTML = `
-<strong>
-${type === "user" ? "👤 YOU" : "⚡ JARVIS AI"}
-</strong>
-<br><br>
-${text}
-`;
-
-messages.appendChild(div);
-
-messages.scrollTop = messages.scrollHeight;
-
-}
-
-/* SPEAK */
-
-function speak(text){
-
-if(!window.speechSynthesis) return;
-
-speechSynthesis.cancel();
-
-const speech = new SpeechSynthesisUtterance(text);
-
-speech.rate = 1;
-speech.pitch = 1.1;
-
-speechSynthesis.speak(speech);
-
-}
-
-/* WIKIPEDIA SEARCH AI */
-
-async function aiReply(text){
-
-text = text.toLowerCase();
-
-/* HI */
-
-if(text.includes("hi")){
-return "Hi. JARVIS AI is online and ready.";
-}
-
-/* TIME */
-
-if(text.includes("time")){
-
-const now = new Date();
-
-return "Current time is " + now.toLocaleTimeString([],{
-hour:'2-digit',
-minute:'2-digit',
-hour12:true
-});
-
-}
-
-/* DATE */
-
-if(text.includes("date")){
-return "Today's date is " + new Date().toDateString();
-}
-
-/* JOKE */
-
-if(text.includes("joke")){
-
-const jokes = [
-
-"Why do programmers hate nature? Too many bugs.",
-
-"Why was the computer cold? It forgot to close Windows.",
-
-"Why did the AI become calm? Deep learning."
-
-];
-
-return jokes[Math.floor(Math.random()*jokes.length)];
-
-}
-
-/* OPEN WEBSITE COMMANDS */
-
-if(text.includes("open youtube")){
-openWebsite("https://youtube.com");
-return "Opening YouTube.";
-}
-
-if(text.includes("open netflix")){
-openWebsite("https://netflix.com");
-return "Opening Netflix.";
-}
-
-if(text.includes("open spotify")){
-openWebsite("https://spotify.com");
-return "Opening Spotify.";
-}
-
-if(text.includes("open github")){
-openWebsite("https://github.com");
-return "Opening GitHub.";
-}
-
-if(text.includes("open replit")){
-openWebsite("https://replit.com");
-return "Opening Replit.";
-}
-
-/* WIKIPEDIA SEARCH COMMAND */
-
-try{
-
-let searchText = text
-.replace("who is","")
-.replace("what is","")
-.replace("tell me about","")
-.replace("search","")
-.trim();
-
-const response = await fetch(
-`https://en.wikipedia.org/api/rest_v1/page/summary/${searchText}`
-);
-
-const data = await response.json();
-
-if(data.extract){
-return data.extract;
-}
-
-}catch(error){
-
-return "Wikipedia search failed.";
-
-}
-
-/* DEFAULT */
-
-return "I am still learning new things.";
-
-}
-
-/* SEND MESSAGE */
-
-async function sendMessage(){
-
-const text = input.value.trim();
-
-if(!text) return;
-
-addMessage("user",text);
-
-input.value = "";
-
-const response = await aiReply(text);
-
-addMessage("ai",response);
-
-speak(response);
-
-}
-
-/* ENTER */
-
-input.addEventListener("keypress",function(e){
-
-if(e.key === "Enter"){
-sendMessage();
-}
-
-});
-
-/* IMAGE */
-
-function generateImage(){
-
-const randomNum = Math.floor(Math.random()*1000);
-
-const url = `https://picsum.photos/900/500?random=${randomNum}`;
-
-imageBox.innerHTML = `
-
-<h2 style="margin-bottom:15px;color:var(--blue);">
-AI GENERATED IMAGE
-</h2>
-
-<img src="${url}">
-
-`;
-
-}
-
-/* VOICE */
-
-function startVoice(){
-
-const SpeechRecognition =
-window.SpeechRecognition || window.webkitSpeechRecognition;
-
-if(!SpeechRecognition){
-
-alert("Voice recognition not supported.");
-
-return;
-
-}
-
-const recognition = new SpeechRecognition();
-
-recognition.lang = "en-US";
-
-recognition.start();
-
-recognition.onresult = function(event){
-
-const transcript = event.results[0][0].transcript;
-
-input.value = transcript;
-
-sendMessage();
-
-};
-
-}
-
-/* CHAT */
-
-function newChat(){
-
-messages.innerHTML = "";
-
-imageBox.innerHTML = "";
-
-addMessage("ai","New conversation initialized.");
-
-}
-
-function clearChat(){
-
-newChat();
-
-}
-
-/* OPEN WEBSITE */
-
-function openWebsite(url){
-
-window.open(url,"_blank");
-
-}
-
-/* LOAD */
-
-window.onload = function(){
-
-updateClock();
-
-};
-
-</script>
-
+    <div class="bg"></div>
+
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="ai-logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/8649/8649595.png" alt="JARVIS AI" style="width:100%;height:100%;">
+            </div>
+            <div class="login-title">JARVIS AI</div>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="fullname" placeholder="Full Name" autocomplete="name">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="username" placeholder="Email Address" autocomplete="email">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <button class="btn" id="registerBtn">REGISTER</button>
+            <button class="btn btn-outline" id="loginBtn">LOGIN</button>
+        </div>
+    </div>
+
+    <div class="app" id="app">
+        <div class="container">
+            <div class="sidebar">
+                <div class="logo-circle" style="text-align:center;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/8649/8649595.png" alt="JARVIS" style="width:100%;height:100%;">
+                </div>
+                <div class="app-title">JARVIS AI</div>
+                <div class="profile-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="Profile" class="profile-avatar">
+                    <div class="profile-name" id="profileName">User</div>
+                    <div class="profile-role">Advanced AI User</div>
+                </div>
+
+                <div class="section-title">🎞️ Entertainment</div>
+                <button class="nav-button" onclick="openWebsite('https://www.youtube.com')"><i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube</button>
+                <button class="nav-button" onclick="openWebsite('https://www.netflix.com')"><i class="fas fa-film" style="color:#e50914;"></i> Netflix</button>
+                <button class="nav-button" onclick="openWebsite('https://www.hotstar.com')"><i class="fas fa-tv" style="color:#1f80e0;"></i> Hotstar</button>
+                <button class="nav-button" onclick="openWebsite('https://www.primevideo.com')"><i class="fas fa-play-circle" style="color:#00a8e1;"></i> Prime Video</button>
+
+                <div class="section-title">🎮Games</div>
+                <button class="nav-button" onclick="openWebsite('https://poki.com')"><i class="fas fa-gamepad" style="color:#ff6b6b;"></i> Poki</button>
+                <button class="nav-button" onclick="openWebsite('https://www.crazygames.com')"><i class="fas fa-ghost" style="color:#a55eea;"></i> CrazyGames</button>
+                <button class="nav-button" onclick="openWebsite('https://www.miniclip.com')"><i class="fas fa-puzzle-piece" style="color:#26de81;"></i> Miniclip</button>
+                <button class="nav-button" onclick="openWebsite('https://www.roblox.com')"><i class="fas fa-cube" style="color:#ff9a00;"></i> Roblox</button>
+
+                <div class="section-title">📁Microsoft Office</div>
+                <button class="nav-button" onclick="openWebsite('https://www.office.com/launch/word')"><i class="fas fa-file-word" style="color:#2b579a;"></i> Microsoft Word</button>
+                <button class="nav-button" onclick="openWebsite('https://www.office.com/launch/excel')"><i class="fas fa-file-excel" style="color:#217346;"></i> Microsoft Excel</button>
+                <button class="nav-button" onclick="openWebsite('https://www.office.com/launch/powerpoint')"><i class="fas fa-file-powerpoint" style="color:#d24726;"></i> Microsoft PowerPoint</button>
+                <button class="nav-button" onclick="openWebsite('https://www.office.com/launch/onenote')"><i class="fas fa-sticky-note" style="color:#7719aa;"></i> OneNote</button>
+                <button class="nav-button" onclick="openWebsite('https://outlook.live.com')"><i class="fas fa-envelope-open-text" style="color:#0078d4;"></i> Outlook</button>
+
+                <div class="section-title">🎨Design Tools</div>
+                <button class="nav-button" onclick="openWebsite('https://www.canva.com')"><i class="fas fa-palette" style="color:#00c4cc;"></i> Canva</button>
+                <button class="nav-button" onclick="openWebsite('https://www.figma.com')"><i class="fab fa-figma" style="color:#a259ff;"></i> Figma</button>
+                <button class="nav-button" onclick="openWebsite('https://www.photopea.com')"><i class="fas fa-image" style="color:#00bcd4;"></i> Photopea</button>
+
+                <div class="section-title">📊 Productivity</div>
+                <button class="nav-button" onclick="openWebsite('https://docs.google.com')"><i class="fas fa-file-alt" style="color:#4285f4;"></i> Google Docs</button>
+                <button class="nav-button" onclick="openWebsite('https://sheets.google.com')"><i class="fas fa-table" style="color:#34a853;"></i> Google Sheets</button>
+                <button class="nav-button" onclick="openWebsite('https://slides.google.com')"><i class="fas fa-presentation" style="color:#fbbc04;"></i> Google Slides</button>
+                <button class="nav-button" onclick="openWebsite('https://www.notion.so')"><i class="fas fa-clipboard-list" style="color:#ffffff;"></i> Notion</button>
+                <button class="nav-button" onclick="openWebsite('https://trello.com')"><i class="fab fa-trello" style="color:#0079bf;"></i> Trello</button>
+
+                <div class="section-title">✨AI Tools</div>
+                <button class="nav-button" onclick="openWebsite('https://chat.openai.com')"><i class="fas fa-brain" style="color:#74aa9c;"></i> ChatGPT</button>
+                <button class="nav-button" onclick="openWebsite('https://gemini.google.com')"><i class="fas fa-gem" style="color:#4285f4;"></i> Gemini</button>
+
+                <div class="section-title">🔍Tools</div>
+                <button class="nav-button" onclick="openWebsite('https://mail.google.com')"><i class="fas fa-envelope" style="color:#ea4335;"></i> Gmail</button>
+                <button class="nav-button" onclick="openWebsite('https://www.wikipedia.org')"><i class="fas fa-book" style="color:#000;"></i> Wikipedia</button>
+
+                <button class="nav-button logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+
+            <div class="main">
+                <div class="topbar">
+                    <div style="display:flex;align-items:center;gap:15px;">
+                        <div class="status-dot"></div>
+                        <span style="color:var(--green);font-weight:600;">ONLINE</span>
+                    </div>
+                    <div class="current-time" id="clock">--:--:--</div>
+                    <div style="color:var(--sub);"><i class="fas fa-wifi"></i> Connected</div>
+                </div>
+                <div class="chat-container">
+                    <div class="welcome-screen" id="welcomeScreen">
+                        <h1>JARVIS</h1>
+                        <p style="color:var(--sub);font-size:18px;margin-bottom:30px;">Your Advanced AI Assistant</p>
+                        <div class="command-suggestions">
+                            <div class="suggestion-chip" onclick="quickCommand('Open Microsoft Word')"><i class="fas fa-file-word"></i> Open Word</div>
+                            <div class="suggestion-chip" onclick="quickCommand('Open Microsoft Excel')"><i class="fas fa-file-excel"></i> Open Excel</div>
+                            <div class="suggestion-chip" onclick="quickCommand('Open Canva')"><i class="fas fa-palette"></i> Open Canva</div>
+                            <div class="suggestion-chip" onclick="quickCommand('Open Google Docs')"><i class="fas fa-file-alt"></i> Open Google Docs</div>
+                            <div class="suggestion-chip" onclick="quickCommand('Open Roblox')"><i class="fas fa-cube"></i> Open Roblox</div>
+                            <div class="suggestion-chip" onclick="quickCommand('Tell me a joke')"><i class="fas fa-laugh"></i> Tell me a joke</div>
+                        </div>
+                    </div>
+                    <div class="messages" id="messages"></div>
+                </div>
+                <div class="input-area">
+                    <div class="input-container">
+                        <input type="text" id="userInput" placeholder="Ask JARVIS AI anything..." autocomplete="off">
+                        <button class="send-button" id="sendBtn">SEND</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function storageAvailable() {
+            try {
+                var test = '__storage_test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch(e) {
+                return false;
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('errorMessage').textContent = msg;
+            console.error('JARVIS Error:', msg);
+        }
+
+        function clearError() {
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        function registerUser() {
+            clearError();
+            console.log('Register function called');
+            
+            var fullname = document.getElementById('fullname').value.trim();
+            var email = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value.trim();
+
+            if (!fullname || !email || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+            if (!email.includes('@') || !email.includes('.')) {
+                showError('Please enter a valid email');
+                return;
+            }
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
+
+            if (!storageAvailable()) {
+                showError('localStorage not available. Check browser settings.');
+                return;
+            }
+
+            var userData = {
+                fullName: fullname,
+                email: email,
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                localStorage.setItem('jarvis_user', JSON.stringify(userData));
+                console.log('User registered and saved:', userData);
+                alert('Registration successful! Logging you in...');
+                showApp(fullname);
+            } catch(e) {
+                showError('Failed to save user data.');
+                console.error(e);
+            }
+        }
+
+        function loginUser() {
+            clearError();
+            console.log('Login function called');
+            
+            var email = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                showError('Please enter email and password');
+                return;
+            }
+
+            if (!storageAvailable()) {
+                showError('localStorage not available. Check browser settings.');
+                return;
+            }
+
+            var userStr = localStorage.getItem('jarvis_user');
+            console.log('Retrieved user data:', userStr);
+            
+            if (!userStr) {
+                showError('No user found. Please register first.');
+                return;
+            }
+
+            try {
+                var userData = JSON.parse(userStr);
+                if (email === userData.email && password === userData.password) {
+                    console.log('Login successful for', userData.fullName);
+                    showApp(userData.fullName);
+                } else {
+                    showError('Invalid email or password');
+                }
+            } catch(e) {
+                showError('Error reading user data. Please register again.');
+                console.error(e);
+            }
+        }
+
+        function showApp(fullName) {
+            console.log('Showing app for', fullName);
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            document.getElementById('profileName').textContent = fullName;
+            
+            try {
+                localStorage.setItem('jarvis_session', JSON.stringify({
+                    user: fullName,
+                    loginTime: new Date().toISOString()
+                }));
+            } catch(e) {
+                console.warn('Could not save session', e);
+            }
+            
+            addMessage('ai', 'Welcome back, ' + fullName + '! JARVIS AI is ready to assist you. Type "help" for all commands.');
+            updateClock();
+        }
+
+        window.addEventListener('load', function() {
+            console.log('Page loaded, checking session...');
+            
+            document.getElementById('registerBtn').addEventListener('click', registerUser);
+            document.getElementById('loginBtn').addEventListener('click', loginUser);
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('userInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            if (!storageAvailable()) {
+                showError('localStorage not available. Some features may not work.');
+            }
+
+            var sessionStr = localStorage.getItem('jarvis_session');
+            if (sessionStr) {
+                try {
+                    var session = JSON.parse(sessionStr);
+                    console.log('Session found for', session.user);
+                    showApp(session.user);
+                } catch(e) {
+                    console.error('Invalid session data');
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('jarvis_session');
+                location.reload();
+            }
+        }
+
+        function updateClock() {
+            var now = new Date();
+            var timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+            });
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        function addMessage(type, text) {
+            var welcome = document.getElementById('welcomeScreen');
+            if (welcome) welcome.style.display = 'none';
+            var container = document.getElementById('messages');
+            var div = document.createElement('div');
+            div.className = 'message ' + type + '-message';
+            div.innerHTML = '<div class="message-header">' + (type === 'user' ? '👤 YOU' : '⚡ JARVIS AI') + '</div><div class="message-content">' + text + '</div>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function quickCommand(cmd) {
+            document.getElementById('userInput').value = cmd;
+            sendMessage();
+        }
+
+        function openWebsite(url) {
+            window.open(url, '_blank');
+            addMessage('ai', 'Opening ' + url + '...');
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1;
+                utterance.pitch = 1.1;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function sendMessage() {
+            var input = document.getElementById('userInput');
+            var text = input.value.trim();
+            if (!text) return;
+            addMessage('user', text);
+            input.value = '';
+            var lower = text.toLowerCase();
+            var response = '';
+
+            // Entertainment commands
+            if (lower.includes('open youtube') || lower.includes('youtube')) {
+                openWebsite('https://www.youtube.com');
+                return;
+            } else if (lower.includes('open netflix') || lower.includes('netflix')) {
+                openWebsite('https://www.netflix.com');
+                return;
+            } else if (lower.includes('open hotstar') || lower.includes('hotstar')) {
+                openWebsite('https://www.hotstar.com');
+                return;
+            } else if (lower.includes('open prime video') || lower.includes('prime video')) {
+                openWebsite('https://www.primevideo.com');
+                return;
+            }
+
+            // Game commands
+            else if (lower.includes('open poki') || lower.includes('poki')) {
+                openWebsite('https://poki.com');
+                return;
+            } else if (lower.includes('open crazy games') || lower.includes('crazygames') || lower.includes('crazy games')) {
+                openWebsite('https://www.crazygames.com');
+                return;
+            } else if (lower.includes('open miniclip') || lower.includes('miniclip')) {
+                openWebsite('https://www.miniclip.com');
+                return;
+            } else if (lower.includes('open roblox') || lower.includes('roblox')) {
+                openWebsite('https://www.roblox.com');
+                return;
+            }
+
+            // Microsoft Office commands
+            else if (lower.includes('open microsoft word') || lower.includes('open word') || lower.includes('microsoft word')) {
+                openWebsite('https://www.office.com/launch/word');
+                return;
+            } else if (lower.includes('open microsoft excel') || lower.includes('open excel') || lower.includes('microsoft excel')) {
+                openWebsite('https://www.office.com/launch/excel');
+                return;
+            } else if (lower.includes('open microsoft powerpoint') || lower.includes('open powerpoint') || lower.includes('microsoft powerpoint')) {
+                openWebsite('https://www.office.com/launch/powerpoint');
+                return;
+            } else if (lower.includes('open onenote') || lower.includes('onenote')) {
+                openWebsite('https://www.office.com/launch/onenote');
+                return;
+            } else if (lower.includes('open outlook') || lower.includes('outlook')) {
+                openWebsite('https://outlook.live.com');
+                return;
+            }
+
+            // Design tools commands
+            else if (lower.includes('open canva') || lower.includes('canva')) {
+                openWebsite('https://www.canva.com');
+                return;
+            } else if (lower.includes('open figma') || lower.includes('figma')) {
+                openWebsite('https://www.figma.com');
+                return;
+            } else if (lower.includes('open photopea') || lower.includes('photopea')) {
+                openWebsite('https://www.photopea.com');
+                return;
+            }
+
+            // Productivity commands
+            else if (lower.includes('open google docs') || lower.includes('google docs')) {
+                openWebsite('https://docs.google.com');
+                return;
+            } else if (lower.includes('open google sheets') || lower.includes('google sheets')) {
+                openWebsite('https://sheets.google.com');
+                return;
+            } else if (lower.includes('open google slides') || lower.includes('google slides')) {
+                openWebsite('https://slides.google.com');
+                return;
+            } else if (lower.includes('open notion') || lower.includes('notion')) {
+                openWebsite('https://www.notion.so');
+                return;
+            } else if (lower.includes('open trello') || lower.includes('trello')) {
+                openWebsite('https://trello.com');
+                return;
+            }
+
+            // AI Tools commands
+            else if (lower.includes('open chatgpt') || lower.includes('chatgpt')) {
+                openWebsite('https://chat.openai.com');
+                return;
+            } else if (lower.includes('open gemini') || lower.includes('gemini')) {
+                openWebsite('https://gemini.google.com');
+                return;
+            }
+
+            // Tools commands
+            else if (lower.includes('open gmail') || lower.includes('gmail')) {
+                openWebsite('https://mail.google.com');
+                return;
+            } else if (lower.includes('open wikipedia') || lower.includes('wikipedia')) {
+                openWebsite('https://www.wikipedia.org');
+                return;
+            }
+
+            // Greetings
+            if (lower.match(/^(hello|hi|hey|greetings)/)) {
+                var hour = new Date().getHours();
+                var greeting = 'Hello';
+                if (hour < 12) greeting = 'Good morning';
+                else if (hour < 18) greeting = 'Good afternoon';
+                else greeting = 'Good evening';
+                response = greeting + '! JARVIS AI at your service.';
+            } else if (lower.includes('time')) {
+                response = 'Current time is ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true,timeZoneName:'short'}) + '.';
+            } else if (lower.includes('date')) {
+                response = 'Today is ' + new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'}) + '.';
+            } else if (lower.includes('joke')) {
+                var jokes = [
+                    "Why don't scientists trust atoms? Because they make up everything!",
+                    "Why did the AI go to therapy? It had too many neural issues!",
+                    "What do you call a computer that sings? A Dell!",
+                    "Why do programmers prefer dark mode? Because light attracts bugs!",
+                    "What's a computer's favorite beat? An algorithm!"
+                ];
+                response = jokes[Math.floor(Math.random() * jokes.length)];
+            } else if (lower.includes('help') || lower.includes('commands')) {
+                response = "Available commands:\\n\\n fa-sa-tv Entertainment: Open YouTube, Netflix, Hotstar, Prime Video\\n🎮 Games: Open Poki, CrazyGames, Miniclip, Roblox\\n📂 Microsoft Office: Open Word, Excel, PowerPoint, OneNote, Outlook\\n🎨 Design: Open Canva, Figma, Photopea\\n📊 Productivity: Open Google Docs, Sheets, Slides, Notion, Trello\\n🤖 AI: Open ChatGPT, Gemini\\n🛠️ Tools: Open Gmail, Wikipedia\\n\\nOther: Ask time, date, tell me a joke, or search any topic!";
+            } else {
+                var searchText = text.replace(/^(who is|what is|tell me about|define|explain)/i, '').trim();
+                if (searchText) {
+                    fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(searchText))
+                        .then(function(res) { return res.json(); })
+                        .then(function(data) {
+                            if (data.extract) {
+                                addMessage('ai', data.extract);
+                                speak(data.extract);
+                            } else {
+                                addMessage('ai', "I couldn't find information on that.");
+                            }
+                        })
+                        .catch(function() {
+                            addMessage('ai', "Error connecting to knowledge base.");
+                        });
+                    return;
+                } else {
+                    response = "I didn't understand. Type 'help' for all available commands.";
+                }
+            }
+            addMessage('ai', response);
+            speak(response);
+        }
+    </script>
 </body>
-
 </html>
-
 """
 
 @app.route("/")
@@ -781,4 +864,6 @@ def home():
     return render_template_string(HTML)
 
 if __name__ == "__main__":
+    print("JARVIS AI server starting...")
+    print("Open http://127.0.0.1:5000 in your browser")
     app.run(debug=True)
